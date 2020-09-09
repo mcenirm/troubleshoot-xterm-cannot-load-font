@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+guard=--with-xvfb-run
+[ "${1:-}" = "$guard" ] || { exec xvfb-run -d "$0" "$guard" ; exit 0 ; }
+
+echo = ALL FONTS
+xlsfonts
+echo
+
+echo = REQUIRED FONT
+xlsfonts -fn '-misc-fixed-medium-r-semicondensed--13-120-75-75-c-60-iso10646-1'
+echo
+
+# echo = PACKAGES
+# fc-list | cut -d: -f1 | xargs -r rpm -qf | sort -u
+# echo

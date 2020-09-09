@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+yum -q -y install /usr/sbin/crond
+
+mkdir -pv /x/{bin,log}
+cat > /x/bin/watchdog-xterm <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+
+EOF

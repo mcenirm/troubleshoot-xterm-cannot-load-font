@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+pipe=/tmp/experiment_2_channel
+log=/tmp/experiment_2_log
+msg1='done checking before package'
+msg2='done installing package'
+msg3='done checking after package'
+
+check_for_required_font () {
+  xlsfonts -fn -misc-fixed-medium-r-semicondensed--13-120-75-75-c-60-iso10646-1
+}
+
+receive_msg () {
+  read msg < "$pipe"
+  if [ "$msg" != "$1" ]
+  then
+    echo ERROR: expected msg "$msg", recieved msg "$1"
+    exit 7
+  fi
+}
+
+send_msg () {
+  echo "$1" > "$pipe"
+}
+
+if [ $(id -u) -eq 0 ]
+then
+  (
+    mkfifo "$pipe"
+    chown -c x:x /tmp/experiment_2_*
+    echo STARTING BACKGROUND CHECKER
+    ./as_user_x xvfb-run -d xterm -e script -f -c "$0" -a "$log" &
+    # ps -Hfe
+    echo WAITING FOR FONT CHECK
+    receive_msg "$msg1"
+    # ps -Hfe
+    echo INSTALLING PACKAGE
+    yum -q -y install xorg-x11-fonts-misc
+    send_msg "$msg2"
+    # ps -Hfe
+    echo WAITING FOR FONT CHECK
+    receive_msg "$msg3"
+    # ps -Hfe
+    echo WRAPPING UP
+    wait
+  ) |& sed -e 's/^/^^ /'
+  cat "$log"
+else
+  (
+    echo BEFORE PACKAGE
+    check_for_required_font
+    send_msg "$msg1"
+    echo WAITING FOR PACKAGE
+    receive_msg "$msg2"
+    echo AFTER PACKAGE
+    check_for_required_font
+    send_msg "$msg3"
+    echo EXITING
+  ) |& sed -e 's/^/vv /'
+fi

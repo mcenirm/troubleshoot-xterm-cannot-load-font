@@ -9,6 +9,11 @@ https://unix.stackexchange.com/a/433325
 I do not have a way to test the error or the fix in the original context (cron task that uses Xvfb on RHEL7), so hooray for Docker!
 
 
+## References
+
+[X Logical Font Description](https://wiki.archlinux.org/index.php/X_Logical_Font_Description) from archlinux
+
+
 ## Previous effort
 
 * See what X11 font packages are already there

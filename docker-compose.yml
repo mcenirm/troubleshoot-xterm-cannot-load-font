@@ -1,0 +1,13 @@
+version: "3"
+services:
+  x:
+    build:
+      context: ./context
+    volumes:
+      - .:/work
+    working_dir: /work
+  experiment4:
+    image: centos:7
+    volumes:
+      - .:/work
+    command: /work/experiment_4_xterm_no_error_message_in_docker

@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+if [ "$(id -u -n)" = x ]
+then
+  cd /work
+  exec "$@"
+else
+  exec sudo -u x -i /work/as_user_x "$@"
+fi

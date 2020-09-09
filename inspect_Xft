@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+echo = FONTS
+fc-list | sort
+echo
+
+echo = PACKAGES
+fc-list | cut -d: -f1 | xargs -r rpm -qf | sort -u
+echo

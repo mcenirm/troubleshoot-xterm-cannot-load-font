@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [ -e /.dockerenv ]
+then
+  container=docker
+  logdir=/work/log-experiment4-docker
+  runner=x
+elif [ "$(id -u -n)" = vagrant ]
+then
+  container=vagrant
+  logdir=/vagrant/log-experiment4-vagrant
+  runner=vagrant
+else
+  echo >&2 ERROR: unable to determine container
+  exit 1
+fi
+logdir+=-$(date -u '+%s.%F')
+mkdir -pv "$logdir"
+exec >"$logdir"/wrapper.out 2>"$logdir"/wrapper.err
+
+case "$container" in
+docker)
+  yum -q -y install /usr/bin/sudo
+  ;;
+esac
+
+to_install=(
+    /usr/bin/script
+    /usr/bin/strace
+    /usr/bin/which
+    /usr/bin/xterm
+    /usr/bin/xvfb-run
+)
+
+sudo yum -q -y install "${to_install[@]}"
+
+rpm -qa | sort > "$logdir"/rpm.lst
+
+if [ "$container" != vagrant ]
+then
+  useradd "$runner"
+fi
+
+sudo -u "$runner" -i strace -s 256 -o "$logdir"/strace.out -ff /usr/bin/xvfb-run -d -e "$logdir"/xvfb.err /usr/bin/xterm -e /usr/bin/true

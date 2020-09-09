@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+t=$(mktemp)
+
+echo = XTERM FONTS
+find /usr/share/X11/app-defaults -type f -name '*XTerm*' -print0 \
+| xargs -0 -r sed -n -r -e 's/^[^#].*\.font[0-9]*:[ \t]*//p' -- \
+| sort -u | tee "$t"
+echo
+
+echo = FILES
+cat "$t" | xvfb-run -d xargs -r -IZ xlsfonts -fn Z
+echo
