@@ -35,7 +35,7 @@ to_install=(
 
 sudo yum -q -y install "${to_install[@]}"
 
-rpm -qa | sort > "$logdir"/rpm.lst
+rpm -qa | LC_ALL=C sort > "$logdir"/rpm.lst
 
 if [ "$container" != vagrant ]
 then
