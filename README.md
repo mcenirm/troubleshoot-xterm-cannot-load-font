@@ -9,6 +9,13 @@ https://unix.stackexchange.com/a/433325
 I do not have a way to test the error or the fix in the original context (cron task that uses Xvfb on RHEL7), so hooray for Docker!
 
 
+## Docker weirdness
+
+The "centos:7" Docker image never even shows the "cannot load font" error message.
+
+In contrast, the original RHEL7 system and the "bento/centos-7" (v202008.16.0) Vagrant box both show the error message when starting xterm. (see [the list of RPM differences](docker-vs-vagrant.rpm-qa.diff))
+
+
 ## References
 
 [X Logical Font Description](https://wiki.archlinux.org/index.php/X_Logical_Font_Description) from archlinux
