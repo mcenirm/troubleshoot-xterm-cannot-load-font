@@ -9,6 +9,27 @@ https://unix.stackexchange.com/a/433325
 I do not have a way to test the error or the fix in the original context (cron task that uses Xvfb on RHEL7), so hooray for Docker!
 
 
+## More details about the original context
+
+Xvfb starts with the `-fp unix/:7100` option, but there is no font server running on the system. This appears to be a hold-over from at least three generations of systems for this particular setup, which started on SGI IRIX. This explains why installing the new font package made no difference, since its fontpath did not include the expected `catalogue:/etc/X11/fontpath.d` entry. With the missing font server, `xlsfonts` showed only:
+
+```
+-misc-fixed-medium-r-semicondensed--0-0-75-75-c-0-iso8859-1
+-misc-fixed-medium-r-semicondensed--13-100-100-100-c-60-iso8859-1
+-misc-fixed-medium-r-semicondensed--13-120-75-75-c-60-iso8859-1
+6x13
+cursor
+fixed
+```
+
+Useful commands:
+
+* `xset q | grep -A1 -i font` - show the active font path
+* `xset fp rehash` - reread the fonts details without changing the font path
+* `xset fp default` - reset the font path to defaults
+* `xset +fp catalogue:/etc/X11/fontpath.d` - prepend the expected catalogue to the active font path
+
+
 ## Docker weirdness
 
 The "centos:7" Docker image never even shows the "cannot load font" error message.
